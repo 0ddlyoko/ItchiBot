@@ -1,0 +1,13 @@
+token: "<yourtoken>"
+prefix: "&"
+activity: "https://uniqsky.fr"
+reaction:
+  valid: "UsValid:642724648517238785"
+  invalid: "USnot_Valid:642724619454906378"
+suggests:
+  channels:
+  - 639122530904571924
+  - 638835318199681047
+  title: "**Suggestion de *%user%***"
+  message: "%message%"
+  footer: 'Une suggestion? Écrivez-la ici'
