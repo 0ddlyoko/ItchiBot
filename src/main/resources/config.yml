@@ -21,5 +21,5 @@ accept:
   notfound: "⁉️"
   footer: 'Cette suggestion a été acceptée, merci à vous'
   emoji:
-    valid: "USlogo:662378825937715214"
-    invalid: "USpanda_triste:662282509106675735"
+    valid: "USapproved:666424091028226078"
+    invalid: "USdeclined:666424122695221269"
