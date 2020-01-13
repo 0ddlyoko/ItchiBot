@@ -68,7 +68,13 @@ public class Config {
 	}
 
 	public String getString(String path) {
+		return getString(path, true);
+	}
+
+	public String getString(String path, boolean replace) {
 		String name = fconfig.getString(path);
+		if (!replace)
+			return name;
 		return name == null ? null : name.replace("&", "§");
 	}
 
@@ -89,10 +95,13 @@ public class Config {
 	}
 
 	public List<String> getStringList(String path) {
+		return getStringList(path, true);
+	}
+
+	public List<String> getStringList(String path, boolean replace) {
 		List<String> name = new ArrayList<>();
-		for (String nom : fconfig.getStringList(path)) {
-			name.add(nom.replace("&", "§"));
-		}
+		for (String nom : fconfig.getStringList(path))
+			name.add(replace ? nom.replace("&", "§") : nom);
 		return name;
 	}
 
@@ -107,9 +116,8 @@ public class Config {
 	public List<String> getKeys(String path) {
 		List<String> list = new ArrayList<>();
 		if ("".equalsIgnoreCase(path)) {
-			for (String section : fconfig.getKeys(false)) {
+			for (String section : fconfig.getKeys(false))
 				list.add(section);
-			}
 		} else {
 			ConfigurationSection cs = fconfig.getConfigurationSection(path);
 			if (cs == null)

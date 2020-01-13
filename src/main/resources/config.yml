@@ -1,6 +1,7 @@
 token: "<yourtoken>"
 prefix: "&"
 activity: "https://uniqsky.fr"
+noPerm: "😂"
 reaction:
   valid: "UsValid:642724648517238785"
   invalid: "USnot_Valid:642724619454906378"
@@ -11,3 +12,14 @@ suggests:
   title: "**Suggestion de *%user%***"
   message: "%message%"
   footer: 'Une suggestion? Écrivez-la ici'
+accept:
+  prefix: "&suggestaccept"
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  channel: 639122594112733204
+  notfound: "⁉️"
+  footer: 'Cette suggestion a été acceptée, merci à vous'
+  emoji:
+    valid: "USlogo:662378825937715214"
+    invalid: "USpanda_triste:662282509106675735"
