@@ -1,10 +1,19 @@
 token: "<yourtoken>"
-prefix: "&"
 activity: "play.uniqsky.fr"
 noPerm: "😂"
 reaction:
   valid: "UsValid:642724648517238785"
   invalid: "USnot_Valid:642724619454906378"
+help:
+  command: "&help"
+  title: "Help"
+  footer: "Made by 0ddlyoko and Grandoz for UniqSky"
+  show:
+    1:
+      title: "Mods"
+      values:
+      - "`&accept <id>` - Accepter une suggestion"
+      - "`&deny <id>` - Refuser une suggestion"
 suggests:
   channels:
   - 639122530904571924

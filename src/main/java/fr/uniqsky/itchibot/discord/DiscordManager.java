@@ -58,10 +58,10 @@ public class DiscordManager extends ListenerAdapter {
 							ItchiBot.get().getConfigManager().getNewFooter()
 									.replace("%number%", "" + e.getGuild().getMemberCount()),
 							e.getMember().getUser().getAvatarUrl(),
-							ItchiBot.get().getConfigManager().getNewName().replace("%user%",
-									e.getMember().getUser().getAsMention()),
-							ItchiBot.get().getConfigManager().getNewValue().replace("%user%",
-									e.getMember().getUser().getAsMention())))
+							new String[] { ItchiBot.get().getConfigManager().getNewName().replace("%user%",
+									e.getMember().getUser().getAsMention()) },
+							new String[] { ItchiBot.get().getConfigManager().getNewValue().replace("%user%",
+									e.getMember().getUser().getAsMention()) }))
 					.queue();
 		} catch (InsufficientPermissionException ex) {
 			Bukkit.getLogger().log(Level.SEVERE,
@@ -214,6 +214,14 @@ public class DiscordManager extends ListenerAdapter {
 				e.getMessage().addReaction(ItchiBot.get().getConfigManager().getNoPerm()).queue();
 				return;
 			}
+		} else if (message.trim().equalsIgnoreCase(ItchiBot.get().getConfigManager().getHelpCommand())) {
+			e.getChannel()
+					.sendMessage(createEmbededMessageWithFields(Color.white,
+							ItchiBot.get().getConfigManager().getHelpTitle(), null,
+							ItchiBot.get().getConfigManager().getHelpFooter(), null,
+							ItchiBot.get().getConfigManager().getHelpShowTitle(),
+							ItchiBot.get().getConfigManager().getHelpShowValues()))
+					.queue();
 		}
 	}
 
@@ -247,14 +255,16 @@ public class DiscordManager extends ListenerAdapter {
 	}
 
 	private MessageEmbed createEmbededMessageWithFields(Color color, String title, String description, String footer,
-			String thumbnail, String fieldName, String fieldValue) {
+			String thumbnail, String fieldNames[], String fieldValues[]) {
 		EmbedBuilder em = new EmbedBuilder();
 		em.setThumbnail(thumbnail);
 		em.setColor(Color.white);
 		em.setTitle(title);
 		em.setDescription(description);
 		em.setFooter(footer);
-		em.addField(fieldName, fieldValue, true);
+		for (int i = 0; i < Math.min(fieldNames.length, fieldValues.length); i++) {
+			em.addField(fieldNames[i], fieldValues[i], true);
+		}
 		return em.build();
 	}
 

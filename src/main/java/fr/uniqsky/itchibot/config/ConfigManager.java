@@ -12,13 +12,19 @@ import lombok.Getter;
 public class ConfigManager {
 	private Config config;
 	private String token;
-	private String prefix;
 	private String activity;
 	private String noPerm;
 
 	// Reaction
 	private String reactionValid;
 	private String reactionInvalid;
+
+	// Help
+	private String helpCommand;
+	private String helpTitle;
+	private String helpFooter;
+	private String[] helpShowTitle;
+	private String[] helpShowValues;
 
 	// Suggests
 	private List<String> suggestChannels;
@@ -50,12 +56,23 @@ public class ConfigManager {
 	public ConfigManager() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
 		token = config.getString("token", false);
-		prefix = config.getString("prefix", false);
 		activity = config.getString("activity", false);
 		noPerm = config.getString("noPerm", false);
 		// Reaction
 		reactionValid = config.getString("reaction.valid", false);
 		reactionInvalid = config.getString("reaction.invalid", false);
+		// Help
+		helpCommand = config.getString("help.command", false);
+		helpTitle = config.getString("help.title", false);
+		helpFooter = config.getString("help.footer", false);
+		List<String> helpShowKeys = config.getKeys("help.show");
+		helpShowTitle = new String[helpShowKeys.size()];
+		helpShowValues = new String[helpShowKeys.size()];
+		for (int i = 0; i < helpShowKeys.size(); i++) {
+			String k = "help.show." + helpShowKeys.get(i);
+			helpShowTitle[i] = config.getString(k + ".title", false);
+			helpShowValues[i] = String.join("\n", config.getStringList(k + ".values", false));
+		}
 		// Suggests
 		suggestChannels = config.getStringList("suggests.channels", false);
 		suggestTitle = config.getString("suggests.title", false);
