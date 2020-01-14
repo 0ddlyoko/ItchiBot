@@ -1,6 +1,6 @@
 token: "<yourtoken>"
 prefix: "&"
-activity: "https://uniqsky.fr"
+activity: "play.uniqsky.fr"
 noPerm: "😂"
 reaction:
   valid: "UsValid:642724648517238785"
@@ -13,13 +13,24 @@ suggests:
   message: "%message%"
   footer: 'Une suggestion? Écrivez-la ici'
 accept:
-  prefix: "&suggestaccept"
+  command: "&accept"
   allowUsers:
   - 304694488394235924
   - 520268695210295326
   channel: 639122594112733204
   notfound: "⁉️"
   footer: 'Cette suggestion a été acceptée, merci à vous'
-  emoji:
-    valid: "USapproved:666424091028226078"
-    invalid: "USdeclined:666424122695221269"
+deny:
+  command: "&deny"
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  channel: 666661238444523580
+  notfound: "⁉️"
+  footer: 'Cette suggestion a été refusée'
+new:
+  title: 'Nouveau membre ! 🎉'
+  channel: 638877412108533841
+  name: 'Membre :'
+  value: '%user%'
+  footer: 'Nous sommes désormais %number% membres'

@@ -26,14 +26,26 @@ public class ConfigManager {
 	private String suggestMessage;
 	private String suggestFooter;
 
-	// SuggestAccept
-	private String acceptPrefix;
+	// Accept
+	private String acceptCommand;
 	private List<String> acceptAllowUsers;
 	private String acceptChannel;
 	private String acceptNotFound;
 	private String acceptFooter;
-	private String acceptEmojiValid;
-	private String acceptEmojiInvalid;
+
+	// Deny
+	private String denyCommand;
+	private List<String> denyAllowUsers;
+	private String denyChannel;
+	private String denyNotFound;
+	private String denyFooter;
+
+	// New
+	private String newTitle;
+	private String newChannel;
+	private String newName;
+	private String newValue;
+	private String newFooter;
 
 	public ConfigManager() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
@@ -49,13 +61,23 @@ public class ConfigManager {
 		suggestTitle = config.getString("suggests.title", false);
 		suggestMessage = config.getString("suggests.message", false);
 		suggestFooter = config.getString("suggests.footer", false);
-		// SuggestAccept
-		acceptPrefix = config.getString("accept.prefix", false);
+		// Accept
+		acceptCommand = config.getString("accept.command", false);
 		acceptAllowUsers = config.getStringList("accept.allowUsers", false);
 		acceptChannel = config.getString("accept.channel", false);
 		acceptNotFound = config.getString("accept.notfound", false);
 		acceptFooter = config.getString("accept.footer", false);
-		acceptEmojiValid = config.getString("accept.emoji.valid", false);
-		acceptEmojiInvalid = config.getString("accept.emoji.invalid", false);
+		// Deny
+		denyCommand = config.getString("deny.command", false);
+		denyAllowUsers = config.getStringList("deny.allowUsers", false);
+		denyChannel = config.getString("deny.channel", false);
+		denyNotFound = config.getString("deny.notfound", false);
+		denyFooter = config.getString("deny.footer", false);
+		// New
+		newTitle = config.getString("new.title", false);
+		newChannel = config.getString("new.channel", false);
+		newName = config.getString("new.name", false);
+		newValue = config.getString("new.value", false);
+		newFooter = config.getString("new.footer", false);
 	}
 }
