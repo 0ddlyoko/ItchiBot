@@ -1,11 +1,11 @@
 /**
  * 
  */
-package fr.uniqsky.itchibot.config;
 
 import java.io.File;
 import java.util.List;
 
+import fr.uniqsky.itchibot.config.Config;
 import lombok.Getter;
 
 @Getter

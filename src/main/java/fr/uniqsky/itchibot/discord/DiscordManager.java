@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -223,7 +224,46 @@ public class DiscordManager extends ListenerAdapter {
 							ItchiBot.get().getConfigManager().getHelpShowValues()))
 					.queue();
 		}
+		
+		String msg= e.getMessage().getContentRaw();
+	 	String[] split = msg.split(" ");
+	 	if(split[0].equalsIgnoreCase("&clear") && split.length==2) { 
+	 		if(!isInteger(split[1])) {
+	 			e.getTextChannel().sendMessage("Veuillez entrer une valeur correct").complete();
+	 			return;
+	 		}
+	 		int clear = Integer.parseInt(split[1]);
+	 		if(clear>100) {
+	 			e.getTextChannel().sendMessage("Oulah tu veux me tuer ? entre une valeur inférieur à 100 s'il te plait !").complete();
+	 			return;
+	 		}
+	 		
+	 		MessageHistory History = e.getChannel().getHistoryBefore(e.getMessage() , clear).complete();
+	 		for(Message  m :History.getRetrievedHistory()) {
+	 			m.delete().queue();
+	 		}
+				}
+	 	return;
+		
 	}
+		
+
+
+public static boolean isInteger(String s) {
+return isInteger(s,10);
+}
+
+public static boolean isInteger(String s, int radix) {
+if(s.isEmpty()) return false;
+for(int i = 0; i < s.length(); i++) {
+if(i == 0 && s.charAt(i) == '-') {
+    if(s.length() == 1) return false;
+    else continue;
+}
+if(Character.digit(s.charAt(i),radix) < 0) return false;
+}
+return true;
+}
 
 	private Message getMessageInChannels(String messageId, List<String> channelsId) {
 		Message m = null;
