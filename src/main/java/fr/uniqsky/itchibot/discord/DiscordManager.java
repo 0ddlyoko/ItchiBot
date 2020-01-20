@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import fr.uniqsky.itchibot.ItchiBot;
 import net.dv8tion.jda.api.AccountType;
@@ -16,6 +17,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
@@ -29,23 +31,49 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class DiscordManager extends ListenerAdapter {
 	private JDA jda;
+	private BukkitTask playerNumberScheduler;
 
 	public DiscordManager() {
-		try {
-			jda = new JDABuilder(AccountType.BOT).setToken(ItchiBot.get().getConfigManager().getToken()).build();
-			jda.addEventListener(this);
-			jda.getPresence().setActivity(Activity.playing(ItchiBot.get().getConfigManager().getActivity()));
-			jda.getPresence().setStatus(OnlineStatus.ONLINE);
-		} catch (LoginException ex) {
-			Bukkit.getLogger().log(Level.SEVERE, "LoginException while registering bot", ex);
-			Bukkit.getPluginManager().disablePlugin(ItchiBot.get());
-			return;
-		}
+		Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
+			try {
+				jda = new JDABuilder(AccountType.BOT).setToken(ItchiBot.get().getConfigManager().getToken()).build();
+				jda.addEventListener(this);
+				jda.getPresence().setActivity(Activity.playing(ItchiBot.get().getConfigManager().getActivity()));
+				jda.getPresence().setStatus(OnlineStatus.ONLINE);
+			} catch (LoginException ex) {
+				Bukkit.getLogger().log(Level.SEVERE, "LoginException while registering bot", ex);
+				Bukkit.getPluginManager().disablePlugin(ItchiBot.get());
+				return;
+			}
+		});
 	}
 
 	@Override
 	public void onReady(ReadyEvent event) {
 		System.out.println("API is ready!");
+
+		try {
+			GuildChannel gc = jda.getGuildChannelById(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
+			System.out.println(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
+			System.out.println(gc);
+			System.out.println(gc.getName());
+			// Start the scheduler
+			playerNumberScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(ItchiBot.get(), () -> {
+				gc.getManager()
+						.setName(ItchiBot.get().getConfigManager().getPlayerNumberMessage()
+								.replace("%number%", "" + Bukkit.getOnlinePlayers().size())
+								.replace("%maxnumber%", "" + Bukkit.getMaxPlayers()))
+						.queue();
+			}, 1L, 100L);
+		} catch (InsufficientPermissionException ex) {
+			Bukkit.getLogger().log(Level.SEVERE,
+					"No permission to read channel " + ItchiBot.get().getConfigManager().getPlayerNumberChannel(), ex);
+		} catch (ErrorResponseException ex) {
+		} catch (Exception ex) {
+			Bukkit.getLogger().log(Level.WARNING,
+					"Exception while getting channel " + ItchiBot.get().getConfigManager().getPlayerNumberChannel(),
+					ex);
+		}
 	}
 
 	@Override
@@ -318,7 +346,13 @@ public class DiscordManager extends ListenerAdapter {
 
 	public void stop() {
 		// Stop the app
-		if (jda != null)
-			jda.shutdownNow();
+		try {
+			if (jda != null)
+				jda.shutdownNow();
+		} catch (Exception ex) {
+			Bukkit.getLogger().log(Level.SEVERE, "", ex);
+		}
+		if (playerNumberScheduler != null)
+			Bukkit.getScheduler().cancelTask(playerNumberScheduler.getTaskId());
 	}
 }

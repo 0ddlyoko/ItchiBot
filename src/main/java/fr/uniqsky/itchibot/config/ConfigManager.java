@@ -53,6 +53,10 @@ public class ConfigManager {
 	private String newValue;
 	private String newFooter;
 
+	// PlayerNumber
+	private String playerNumberChannel;
+	private String playerNumberMessage;
+
 	public ConfigManager() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
 		token = config.getString("token", false);
@@ -96,5 +100,9 @@ public class ConfigManager {
 		newName = config.getString("new.name", false);
 		newValue = config.getString("new.value", false);
 		newFooter = config.getString("new.footer", false);
+
+		// PlayerNumber
+		playerNumberChannel = config.getString("playernumber.channel", false);
+		playerNumberMessage = config.getString("playernumber.message", false);
 	}
 }

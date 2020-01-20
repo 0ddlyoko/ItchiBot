@@ -43,3 +43,6 @@ new:
   name: 'Membre :'
   value: '%user%'
   footer: 'Nous sommes désormais %number% membres'
+playernumber:
+  channel: 662421330502746112
+  message: "Connecté : %number%/%maxnumber%"
