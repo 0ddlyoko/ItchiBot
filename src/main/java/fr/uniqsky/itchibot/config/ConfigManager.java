@@ -57,6 +57,9 @@ public class ConfigManager {
 	private String playerNumberChannel;
 	private String playerNumberMessage;
 
+	// Chat
+	private String messagesChannel;
+
 	public ConfigManager() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
 		token = config.getString("token", false);
@@ -104,5 +107,8 @@ public class ConfigManager {
 		// PlayerNumber
 		playerNumberChannel = config.getString("playernumber.channel", false);
 		playerNumberMessage = config.getString("playernumber.message", false);
+
+		// Chat
+		messagesChannel = config.getString("messages.channel", false);
 	}
 }

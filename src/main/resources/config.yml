@@ -46,3 +46,5 @@ new:
 playernumber:
   channel: 662421330502746112
   message: "Connecté : %number%/%maxnumber%"
+messages:
+  channel: 666391573805662220

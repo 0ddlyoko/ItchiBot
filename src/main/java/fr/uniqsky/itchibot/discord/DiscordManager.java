@@ -2,11 +2,19 @@ package fr.uniqsky.itchibot.discord;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
 import javax.security.auth.login.LoginException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import fr.uniqsky.itchibot.ItchiBot;
@@ -23,15 +31,18 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class DiscordManager extends ListenerAdapter {
+public class DiscordManager extends ListenerAdapter implements Listener {
 	private JDA jda;
 	private BukkitTask playerNumberScheduler;
+	private GuildChannel playerNumberChannel;
+	private TextChannel chatChannel;
 
 	public DiscordManager() {
 		Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
@@ -53,13 +64,10 @@ public class DiscordManager extends ListenerAdapter {
 		System.out.println("API is ready!");
 
 		try {
-			GuildChannel gc = jda.getGuildChannelById(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
-			System.out.println(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
-			System.out.println(gc);
-			System.out.println(gc.getName());
+			playerNumberChannel = jda.getGuildChannelById(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
 			// Start the scheduler
 			playerNumberScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(ItchiBot.get(), () -> {
-				gc.getManager()
+				playerNumberChannel.getManager()
 						.setName(ItchiBot.get().getConfigManager().getPlayerNumberMessage()
 								.replace("%number%", "" + Bukkit.getOnlinePlayers().size())
 								.replace("%maxnumber%", "" + Bukkit.getMaxPlayers()))
@@ -74,6 +82,28 @@ public class DiscordManager extends ListenerAdapter {
 					"Exception while getting channel " + ItchiBot.get().getConfigManager().getPlayerNumberChannel(),
 					ex);
 		}
+
+		try {
+			chatChannel = jda.getTextChannelById(ItchiBot.get().getConfigManager().getMessagesChannel());
+		} catch (InsufficientPermissionException ex) {
+			Bukkit.getLogger().log(Level.SEVERE,
+					"No permission to read channel " + ItchiBot.get().getConfigManager().getMessagesChannel(), ex);
+		} catch (ErrorResponseException ex) {
+		} catch (Exception ex) {
+			Bukkit.getLogger().log(Level.WARNING,
+					"Exception while getting channel " + ItchiBot.get().getConfigManager().getMessagesChannel(), ex);
+		}
+		Bukkit.getPluginManager().registerEvents(this, ItchiBot.get());
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerChat(AsyncPlayerChatEvent e) {
+		if (e.isCancelled())
+			return;
+//		chatChannel
+//				.sendMessage(ChatColor
+//						.stripColor(String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage())))
+//				.queue();
 	}
 
 	@Override
@@ -99,7 +129,6 @@ public class DiscordManager extends ListenerAdapter {
 			Bukkit.getLogger().log(Level.WARNING,
 					"Exception while deny / write in channel " + ItchiBot.get().getConfigManager().getNewChannel(), ex);
 		}
-		System.out.println(e.getMember().getUser().getAsMention());
 	}
 
 	@Override
@@ -345,14 +374,31 @@ public class DiscordManager extends ListenerAdapter {
 	}
 
 	public void stop() {
+		if (playerNumberScheduler != null)
+			Bukkit.getScheduler().cancelTask(playerNumberScheduler.getTaskId());
+		if (playerNumberChannel != null) {
+			playerNumberChannel.getManager().setName(ItchiBot.get().getConfigManager().getPlayerNumberMessage()
+					.replace("%number%", "???").replace("%maxnumber%", "???")).queue();
+		}
 		// Stop the app
 		try {
-			if (jda != null)
-				jda.shutdownNow();
+			if (jda != null) {
+				CompletableFuture<Void> shutdownTask = new CompletableFuture<>();
+				jda.addEventListener(new ListenerAdapter() {
+					@Override
+					public void onShutdown(ShutdownEvent event) {
+						shutdownTask.complete(null);
+					}
+				});
+				jda.shutdown();
+				try {
+					shutdownTask.get(15, TimeUnit.SECONDS);
+				} catch (TimeoutException e) {
+					Bukkit.getLogger().warning("JDA took too long to shut down, skipping");
+				}
+			}
 		} catch (Exception ex) {
 			Bukkit.getLogger().log(Level.SEVERE, "", ex);
 		}
-		if (playerNumberScheduler != null)
-			Bukkit.getScheduler().cancelTask(playerNumberScheduler.getTaskId());
 	}
 }
