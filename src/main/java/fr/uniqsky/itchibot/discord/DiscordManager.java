@@ -1,6 +1,6 @@
 package fr.uniqsky.itchibot.discord;
 
-import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -10,41 +10,37 @@ import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.scheduler.BukkitTask;
 
+import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
+import fr.uniqsky.itchibot.commands.commands.AcceptCmd;
+import fr.uniqsky.itchibot.commands.commands.ClearCmd;
+import fr.uniqsky.itchibot.commands.commands.DenyCmd;
+import fr.uniqsky.itchibot.commands.commands.HelpCmd;
+import fr.uniqsky.itchibot.listeners.DiscordListenerAdapter;
+import fr.uniqsky.itchibot.listeners.StopListener;
+import fr.uniqsky.itchibot.listeners.listeners.NewUserListener;
+import fr.uniqsky.itchibot.listeners.listeners.PlayerNumberListener;
+import fr.uniqsky.itchibot.listeners.listeners.SuggestListener;
+import lombok.Getter;
 import net.dv8tion.jda.api.AccountType;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageEmbed.Field;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class DiscordManager extends ListenerAdapter implements Listener {
+public class DiscordManager extends ListenerAdapter implements DiscordUtil {
+	@Getter
 	private JDA jda;
-	private BukkitTask playerNumberScheduler;
-	private GuildChannel playerNumberChannel;
-	private TextChannel chatChannel;
+	private List<StopListener> stops;
 
 	public DiscordManager() {
+		stops = new ArrayList<>();
 		Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
 			try {
 				jda = new JDABuilder(AccountType.BOT).setToken(ItchiBot.get().getConfigManager().getToken()).build();
@@ -59,327 +55,55 @@ public class DiscordManager extends ListenerAdapter implements Listener {
 		});
 	}
 
+	public void addEventListener(DiscordListenerAdapter listener) {
+		jda.addEventListener(listener);
+		addStopListener(listener);
+	}
+
+	public void removeEventListener(DiscordListenerAdapter listener) {
+		jda.removeEventListener(listener);
+		removeStopListener(listener);
+	}
+
+	public void addStopListener(StopListener listener) {
+		stops.add(listener);
+	}
+
+	public void removeStopListener(StopListener listener) {
+		stops.remove(listener);
+	}
+
 	@Override
 	public void onReady(ReadyEvent event) {
 		System.out.println("API is ready!");
 
-		try {
-			playerNumberChannel = jda.getGuildChannelById(ItchiBot.get().getConfigManager().getPlayerNumberChannel());
-			// Start the scheduler
-			playerNumberScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(ItchiBot.get(), () -> {
-				playerNumberChannel.getManager()
-						.setName(ItchiBot.get().getConfigManager().getPlayerNumberMessage()
-								.replace("%number%", "" + Bukkit.getOnlinePlayers().size())
-								.replace("%maxnumber%", "" + Bukkit.getMaxPlayers()))
-						.queue();
-			}, 1L, 100L);
-		} catch (InsufficientPermissionException ex) {
-			Bukkit.getLogger().log(Level.SEVERE,
-					"No permission to read channel " + ItchiBot.get().getConfigManager().getPlayerNumberChannel(), ex);
-		} catch (ErrorResponseException ex) {
-		} catch (Exception ex) {
-			Bukkit.getLogger().log(Level.WARNING,
-					"Exception while getting channel " + ItchiBot.get().getConfigManager().getPlayerNumberChannel(),
-					ex);
-		}
-
-		try {
-			chatChannel = jda.getTextChannelById(ItchiBot.get().getConfigManager().getMessagesChannel());
-		} catch (InsufficientPermissionException ex) {
-			Bukkit.getLogger().log(Level.SEVERE,
-					"No permission to read channel " + ItchiBot.get().getConfigManager().getMessagesChannel(), ex);
-		} catch (ErrorResponseException ex) {
-		} catch (Exception ex) {
-			Bukkit.getLogger().log(Level.WARNING,
-					"Exception while getting channel " + ItchiBot.get().getConfigManager().getMessagesChannel(), ex);
-		}
-		Bukkit.getPluginManager().registerEvents(this, ItchiBot.get());
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerChat(AsyncPlayerChatEvent e) {
-		if (e.isCancelled())
-			return;
-//		chatChannel
-//				.sendMessage(ChatColor
-//						.stripColor(String.format(e.getFormat(), e.getPlayer().getDisplayName(), e.getMessage())))
-//				.queue();
-	}
-
-	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent e) {
-		// Send welcome message
-		try {
-			TextChannel tc = jda.getTextChannelById(ItchiBot.get().getConfigManager().getNewChannel());
-			tc.sendMessage(
-					createEmbededMessageWithFields(Color.white, ItchiBot.get().getConfigManager().getNewTitle(), "",
-							ItchiBot.get().getConfigManager().getNewFooter()
-									.replace("%number%", "" + e.getGuild().getMemberCount()),
-							e.getMember().getUser().getAvatarUrl(),
-							new String[] { ItchiBot.get().getConfigManager().getNewName().replace("%user%",
-									e.getMember().getUser().getAsMention()) },
-							new String[] { ItchiBot.get().getConfigManager().getNewValue().replace("%user%",
-									e.getMember().getUser().getAsMention()) }))
-					.queue();
-		} catch (InsufficientPermissionException ex) {
-			Bukkit.getLogger().log(Level.SEVERE,
-					"No permission to read in channel " + ItchiBot.get().getConfigManager().getNewChannel(), ex);
-		} catch (ErrorResponseException ex) {
-		} catch (Exception ex) {
-			Bukkit.getLogger().log(Level.WARNING,
-					"Exception while deny / write in channel " + ItchiBot.get().getConfigManager().getNewChannel(), ex);
-		}
+		// Commands
+		ItchiBot.get().getCommandManager().registerCommand(new AcceptCmd());
+		ItchiBot.get().getCommandManager().registerCommand(new ClearCmd());
+		ItchiBot.get().getCommandManager().registerCommand(new DenyCmd());
+		ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
+		// Listeners
+		// addEventListener(new ChatListener());
+		addEventListener(new NewUserListener());
+		addEventListener(new PlayerNumberListener());
+		addEventListener(new SuggestListener());
 	}
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent e) {
-		// Do not accept private message
-		if (e.isFromType(ChannelType.PRIVATE))
+		// Do not accept private messages
+		if (!e.isFromGuild() || e.isFromType(ChannelType.PRIVATE))
 			return;
-		if (e.getAuthor().equals(e.getJDA().getSelfUser())) {
-			// Self bot
+		// Self bot
+		if (e.getAuthor().equals(e.getJDA().getSelfUser()))
 			return;
-		}
-		String message = e.getMessage().getContentRaw();
-		// Test if it's in suggest channel
-		if (ItchiBot.get().getConfigManager().getSuggestChannels().contains(e.getTextChannel().getId())) {
-			// Empty message, delete it
-			if ("".equalsIgnoreCase(message.trim())) {
-				e.getMessage().delete().queue();
-				return;
-			}
-			// Delete old message
-			e.getMessage().delete().queue();
-			// Send new message
-			e.getChannel()
-					.sendMessage(createEmbededMessage(Color.white,
-							ItchiBot.get().getConfigManager().getSuggestTitle().replace("%user%",
-									e.getAuthor().getName()),
-							ItchiBot.get().getConfigManager().getSuggestMessage().replace("%message%", message),
-							ItchiBot.get().getConfigManager().getSuggestFooter(), e.getAuthor().getAvatarUrl()))
-					.queue(msg -> {
-						msg.addReaction(ItchiBot.get().getConfigManager().getReactionValid()).queue(success -> {
-							msg.addReaction(ItchiBot.get().getConfigManager().getReactionInvalid()).queue();
-						});
-					});
+		if (ItchiBot.get().getCommandManager().onChat(e))
 			return;
-		} else if (message.startsWith(ItchiBot.get().getConfigManager().getAcceptCommand() + " ")) {
-			if (ItchiBot.get().getConfigManager().getAcceptAllowUsers().contains(e.getAuthor().getId())) {
-				// Accept suggest
-				String id = message.substring(ItchiBot.get().getConfigManager().getAcceptCommand().length() + 1);
-				try {
-					Long.parseLong(id);
-				} catch (Exception ex) {
-					e.getChannel().sendMessage("Please enter a correct id").queue();
-					return;
-				}
-				// Try to search in which channel the message is
-				Message m = getMessageInChannels(id, ItchiBot.get().getConfigManager().getSuggestChannels());
-				if (m == null) {
-					// Message not found
-					e.getMessage().addReaction(ItchiBot.get().getConfigManager().getAcceptNotFound()).queue();
-					return;
-				}
-				// Get raw message
-				String[] all = getTitleMsgImg(m, ItchiBot.get().getConfigManager().getSuggestMessage(),
-						ItchiBot.get().getConfigManager().getSuggestTitle());
-				String title = all[0];
-				String msg = all[1];
-				String imageUrl = all[2];
-				if (msg == null || "".equalsIgnoreCase(msg.trim())) {
-					// Unknown message or empty message. WTF ?
-					e.getMessage().addReaction(ItchiBot.get().getConfigManager().getAcceptNotFound()).queue();
-					return;
-				}
-				// Delete old message
-				e.getMessage().delete().queue();
-
-				// Send new message
-				try {
-					TextChannel tc = jda.getTextChannelById(ItchiBot.get().getConfigManager().getAcceptChannel());
-					tc.sendMessage(createEmbededMessage(Color.white, title,
-							ItchiBot.get().getConfigManager().getSuggestMessage().replace("%message%", msg),
-							ItchiBot.get().getConfigManager().getAcceptFooter(), imageUrl)).queue();
-					// Delete
-					m.delete().queue();
-				} catch (InsufficientPermissionException ex) {
-					Bukkit.getLogger().log(Level.SEVERE,
-							"No permission to read in channel " + ItchiBot.get().getConfigManager().getAcceptChannel(),
-							ex);
-				} catch (ErrorResponseException ex) {
-				} catch (Exception ex) {
-					Bukkit.getLogger().log(Level.WARNING, "Exception while accept / write in channel "
-							+ ItchiBot.get().getConfigManager().getAcceptChannel(), ex);
-				}
-
-				return;
-			} else {
-				e.getMessage().addReaction(ItchiBot.get().getConfigManager().getNoPerm()).queue();
-				return;
-			}
-		} else if (message.startsWith(ItchiBot.get().getConfigManager().getDenyCommand() + " ")) {
-			if (ItchiBot.get().getConfigManager().getDenyAllowUsers().contains(e.getAuthor().getId())) {
-				// Deny suggest
-				String id = message.substring(ItchiBot.get().getConfigManager().getDenyCommand().length() + 1);
-				try {
-					Long.parseLong(id);
-				} catch (Exception ex) {
-					e.getChannel().sendMessage("Please enter a correct id").queue();
-					return;
-				}
-				// Try to search in which channel the message is
-				Message m = getMessageInChannels(id, ItchiBot.get().getConfigManager().getSuggestChannels());
-				if (m == null) {
-					// Message not found
-					e.getMessage().addReaction(ItchiBot.get().getConfigManager().getDenyNotFound()).queue();
-					return;
-				}
-				// Get raw message
-				String[] all = getTitleMsgImg(m, ItchiBot.get().getConfigManager().getSuggestMessage(),
-						ItchiBot.get().getConfigManager().getSuggestTitle());
-				String title = all[0];
-				String msg = all[1];
-				String imageUrl = all[2];
-				if (msg == null || "".equalsIgnoreCase(msg.trim())) {
-					// Unknown message or empty message. WTF ?
-					e.getMessage().addReaction(ItchiBot.get().getConfigManager().getDenyNotFound()).queue();
-					return;
-				}
-				// Delete old message
-				e.getMessage().delete().queue();
-
-				// Send new message
-				try {
-					TextChannel tc = jda.getTextChannelById(ItchiBot.get().getConfigManager().getDenyChannel());
-					tc.sendMessage(createEmbededMessage(Color.white, title,
-							ItchiBot.get().getConfigManager().getSuggestMessage().replace("%message%", msg),
-							ItchiBot.get().getConfigManager().getDenyFooter(), imageUrl)).queue();
-					// Delete
-					m.delete().queue();
-				} catch (InsufficientPermissionException ex) {
-					Bukkit.getLogger().log(Level.SEVERE,
-							"No permission to read in channel " + ItchiBot.get().getConfigManager().getDenyChannel(),
-							ex);
-				} catch (ErrorResponseException ex) {
-				} catch (Exception ex) {
-					Bukkit.getLogger().log(Level.WARNING, "Exception while deny / write in channel "
-							+ ItchiBot.get().getConfigManager().getDenyChannel(), ex);
-				}
-
-				return;
-			} else {
-				e.getMessage().addReaction(ItchiBot.get().getConfigManager().getNoPerm()).queue();
-				return;
-			}
-		} else if (message.trim().equalsIgnoreCase(ItchiBot.get().getConfigManager().getHelpCommand())) {
-			e.getChannel()
-					.sendMessage(createEmbededMessageWithFields(Color.white,
-							ItchiBot.get().getConfigManager().getHelpTitle(), null,
-							ItchiBot.get().getConfigManager().getHelpFooter(), null,
-							ItchiBot.get().getConfigManager().getHelpShowTitle(),
-							ItchiBot.get().getConfigManager().getHelpShowValues()))
-					.queue();
-		}
-	}
-
-	private Message getMessageInChannels(String messageId, List<String> channelsId) {
-		Message m = null;
-		for (String channelId : ItchiBot.get().getConfigManager().getSuggestChannels()) {
-			try {
-				TextChannel tc = jda.getTextChannelById(channelId);
-				m = tc.retrieveMessageById(messageId).complete();
-				if (m != null)
-					break;
-			} catch (InsufficientPermissionException ex) {
-				Bukkit.getLogger().log(Level.SEVERE, "No permission to read in channel " + channelId, ex);
-			} catch (ErrorResponseException ex) {
-			} catch (Exception ex) {
-				Bukkit.getLogger().log(Level.WARNING, "Exception while retrieving message from " + channelId, ex);
-			}
-		}
-		return m;
-	}
-
-	private MessageEmbed createEmbededMessage(Color color, String title, String description, String footer,
-			String thumbnail) {
-		EmbedBuilder em = new EmbedBuilder();
-		em.setThumbnail(thumbnail);
-		em.setColor(Color.white);
-		em.setTitle(title);
-		em.setDescription(description);
-		em.setFooter(footer);
-		return em.build();
-	}
-
-	private MessageEmbed createEmbededMessageWithFields(Color color, String title, String description, String footer,
-			String thumbnail, String fieldNames[], String fieldValues[]) {
-		EmbedBuilder em = new EmbedBuilder();
-		em.setThumbnail(thumbnail);
-		em.setColor(Color.white);
-		em.setTitle(title);
-		em.setDescription(description);
-		em.setFooter(footer);
-		for (int i = 0; i < Math.min(fieldNames.length, fieldValues.length); i++) {
-			em.addField(fieldNames[i], fieldValues[i], true);
-		}
-		return em.build();
-	}
-
-	/**
-	 * Get the title, the message and the image of specific Message.<br />
-	 * <ul>
-	 * <li>If the contentRaw of the message returns something, msg will be the
-	 * rawMessage formatted with msgFormat</li>
-	 * <li>If the contentRaw of the message return nothings (so the message is a
-	 * MessageEmbed), msg if either the first value of first non-empty field
-	 * otherwise the description</li>
-	 * <li>The imageUrl is either the avatar url of the author of the message or the
-	 * thumbnail of the MessageEmbed if it's a MessageEmbed</li>
-	 * <li>The title is either the author name formatted with titleFormat or the
-	 * actual title of the MessageEmbed
-	 * <li>
-	 * </ul>
-	 * 
-	 * @param m
-	 *                        The Message
-	 * @param msgFormat
-	 *                        the format to use for message
-	 * @param titleFormat
-	 *                        the format to use for title
-	 * @return
-	 */
-	private String[] getTitleMsgImg(Message m, String msgFormat, String titleFormat) {
-		// Get raw message
-		String msg = m.getContentRaw();
-		String imageUrl = m.getAuthor().getAvatarUrl();
-		String title = titleFormat.replace("%user%", m.getAuthor().getName());
-		if (msg == null || "".equalsIgnoreCase(msg)) {
-			// Test embeded message
-			if (m.getEmbeds().size() >= 1) {
-				// Get first embed
-				MessageEmbed me = m.getEmbeds().get(0);
-				imageUrl = me.getThumbnail() == null ? null : me.getThumbnail().getUrl();
-				title = me.getTitle();
-				for (Field f : me.getFields()) {
-					msg = f.getValue();
-					if (msg != null && !"".equalsIgnoreCase(msg))
-						break;
-				}
-				if (msg == null || "".equalsIgnoreCase(msg))
-					msg = me.getDescription();
-			}
-		} else
-			msg = msgFormat.replace("%message%", msg);
-		return new String[] { title, msg, imageUrl };
 	}
 
 	public void stop() {
-		if (playerNumberScheduler != null)
-			Bukkit.getScheduler().cancelTask(playerNumberScheduler.getTaskId());
-		if (playerNumberChannel != null) {
-			playerNumberChannel.getManager().setName(ItchiBot.get().getConfigManager().getPlayerNumberMessage()
-					.replace("%number%", "???").replace("%maxnumber%", "???")).queue();
-		}
+		for (StopListener l : new ArrayList<>(stops))
+			l.stop();
 		// Stop the app
 		try {
 			if (jda != null) {
@@ -396,6 +120,7 @@ public class DiscordManager extends ListenerAdapter implements Listener {
 				} catch (TimeoutException e) {
 					Bukkit.getLogger().warning("JDA took too long to shut down, skipping");
 				}
+				jda.shutdownNow();
 			}
 		} catch (Exception ex) {
 			Bukkit.getLogger().log(Level.SEVERE, "", ex);

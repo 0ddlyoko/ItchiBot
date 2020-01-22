@@ -1,11 +1,12 @@
 token: "<yourtoken>"
+prefix: "&"
 activity: "play.uniqsky.fr"
 noPerm: "😂"
 reaction:
   valid: "UsValid:642724648517238785"
   invalid: "USnot_Valid:642724619454906378"
 help:
-  command: "&help"
+  command: "help"
   title: "Help"
   footer: "Made by 0ddlyoko and Grandoz for UniqSky"
   show:
@@ -22,18 +23,20 @@ suggests:
   message: "%message%"
   footer: 'Une suggestion? Écrivez-la ici'
 accept:
-  command: "&accept"
+  command: "accept"
   allowUsers:
   - 304694488394235924
   - 520268695210295326
+  - 392421161092513792
   channel: 639122594112733204
   notfound: "⁉️"
   footer: 'Cette suggestion a été acceptée, merci à vous'
 deny:
-  command: "&deny"
+  command: "deny"
   allowUsers:
   - 304694488394235924
   - 520268695210295326
+  - 392421161092513792
   channel: 666661238444523580
   notfound: "⁉️"
   footer: 'Cette suggestion a été refusée'
@@ -46,5 +49,15 @@ new:
 playernumber:
   channel: 662421330502746112
   message: "Connecté : %number%/%maxnumber%"
-messages:
+chat:
   channel: 666391573805662220
+  format: "> %pseudo%: %message%"
+clear:
+  command: "clear"
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  - 392421161092513792
+  - 414527363234398208
+  - 294132448097337345
+  - 222064468987740161

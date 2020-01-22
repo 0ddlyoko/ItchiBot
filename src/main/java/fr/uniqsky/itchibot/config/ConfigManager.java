@@ -12,6 +12,7 @@ import lombok.Getter;
 public class ConfigManager {
 	private Config config;
 	private String token;
+	private String prefix;
 	private String activity;
 	private String noPerm;
 
@@ -58,10 +59,16 @@ public class ConfigManager {
 	private String playerNumberMessage;
 
 	// Chat
-	private String messagesChannel;
+	private String chatChannel;
+	private String chatFormat;
+
+	// Clear
+	private String clearCommand;
+	private List<String> clearAllowUsers;
 
 	public ConfigManager() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
+		prefix = config.getString("prefix", false);
 		token = config.getString("token", false);
 		activity = config.getString("activity", false);
 		noPerm = config.getString("noPerm", false);
@@ -109,6 +116,11 @@ public class ConfigManager {
 		playerNumberMessage = config.getString("playernumber.message", false);
 
 		// Chat
-		messagesChannel = config.getString("messages.channel", false);
+		chatChannel = config.getString("chat.channel", false);
+		chatFormat = config.getString("chat.format", false);
+
+		// Clear
+		clearCommand = config.getString("clear.command", false);
+		clearAllowUsers = config.getStringList("clear.allowUsers", false);
 	}
 }
