@@ -11,6 +11,7 @@ import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
 import fr.uniqsky.itchibot.listeners.DiscordListenerAdapter;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ChatListener extends DiscordListenerAdapter implements Listener, DiscordUtil {
 	private TextChannel chatChannel;
@@ -31,9 +32,37 @@ public class ChatListener extends DiscordListenerAdapter implements Listener, Di
 		if (e.isCancelled())
 			return;
 		if (chatChannel != null) {
-			String msg = ChatColor.stripColor(ItchiBot.get().getConfigManager().getChatFormat()
-					.replace("%pseudo%", e.getPlayer().getDisplayName()).replace("%message%", e.getMessage()));
-			chatChannel.sendMessage(msg).queue();
+			String msg = ChatColor.stripColor(String.format(e.getFormat(), e.getPlayer().getName(), e.getMessage()));
+			// String msg =
+			// ChatColor.stripColor(ItchiBot.get().getConfigManager().getChatFormat()
+			// .replace("%pseudo%", e.getPlayer().getDisplayName()).replace("%message%",
+			// e.getMessage()));
+			chatChannel.sendMessage(msg.replaceAll("@", "[at]")).queue();
 		}
+	}
+
+	@Override
+	public void onMessageReceived(MessageReceivedEvent e) {
+		// if (chatChannel == null)
+		// return;
+		// // Do not accept private messages
+		// if (!e.isFromGuild() || e.isFromType(ChannelType.PRIVATE))
+		// return;
+		// // Self bot
+		// if (e.getAuthor().equals(e.getJDA().getSelfUser()))
+		// return;
+		// String message = e.getMessage().getContentRaw();
+		// // Test if it's in chat channel
+		// if (!e.getTextChannel().getId().equalsIgnoreCase(chatChannel.getId()))
+		// return;
+		// String id = e.getAuthor().getId();
+		// String user = ItchiBot.get().getConfigManager().getChatUsers().get(id);
+		// if (user != null) {
+		// // User is in the list, send message
+		// String msg = ItchiBot.get().getConfigManager().getChatMc().replace("%user%",
+		// user).replace("%message%",
+		// message);
+		// Bukkit.broadcastMessage(msg);
+		// }
 	}
 }

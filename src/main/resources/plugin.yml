@@ -3,3 +3,10 @@ main: fr.uniqsky.itchibot.ItchiBot
 version: 1.0.0
 api-version: 1.13
 authors: [0ddlyoko, Grandoz]
+commands:
+  itchibot:
+    description: Help ItchiBot
+permissions:
+  itchibot.reload:
+    default: op
+    description: Reload bot configuration

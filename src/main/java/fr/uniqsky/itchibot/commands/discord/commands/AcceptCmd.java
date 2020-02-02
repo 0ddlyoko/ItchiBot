@@ -1,4 +1,4 @@
-package fr.uniqsky.itchibot.commands.commands;
+package fr.uniqsky.itchibot.commands.discord.commands;
 
 import java.awt.Color;
 import java.util.logging.Level;
@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 
 import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
-import fr.uniqsky.itchibot.commands.Command;
+import fr.uniqsky.itchibot.commands.discord.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

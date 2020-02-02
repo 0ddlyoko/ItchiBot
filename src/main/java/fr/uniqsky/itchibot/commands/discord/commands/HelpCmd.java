@@ -1,10 +1,10 @@
-package fr.uniqsky.itchibot.commands.commands;
+package fr.uniqsky.itchibot.commands.discord.commands;
 
 import java.awt.Color;
 
 import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
-import fr.uniqsky.itchibot.commands.Command;
+import fr.uniqsky.itchibot.commands.discord.Command;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class HelpCmd implements Command, DiscordUtil {

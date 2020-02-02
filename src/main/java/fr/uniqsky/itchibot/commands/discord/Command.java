@@ -1,4 +1,4 @@
-package fr.uniqsky.itchibot.commands;
+package fr.uniqsky.itchibot.commands.discord;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 

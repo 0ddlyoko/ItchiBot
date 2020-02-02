@@ -1,4 +1,4 @@
-package fr.uniqsky.itchibot.commands;
+package fr.uniqsky.itchibot.commands.discord;
 
 import java.util.HashMap;
 import java.util.regex.Pattern;

@@ -1,10 +1,10 @@
-package fr.uniqsky.itchibot.commands.commands;
+package fr.uniqsky.itchibot.commands.discord.commands;
 
 import org.bukkit.Bukkit;
 
 import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
-import fr.uniqsky.itchibot.commands.Command;
+import fr.uniqsky.itchibot.commands.discord.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -34,8 +34,8 @@ public class ClearCmd implements Command, DiscordUtil {
 		}
 		if (number <= 0)
 			number = 1;
-		else if (number >= 1000)
-			number = 1000;
+		else if (number >= 100)
+			number = 100;
 		e.getMessage().delete().queue();
 		if (number == 1)
 			return true;

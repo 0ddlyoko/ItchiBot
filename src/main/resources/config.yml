@@ -15,6 +15,7 @@ help:
       values:
       - "`&accept <id>` - Accepter une suggestion"
       - "`&deny <id>` - Refuser une suggestion"
+      - "`&clear <number>` - Clear des messages"
 suggests:
   channels:
   - 639122530904571924
@@ -52,6 +53,41 @@ playernumber:
 chat:
   channel: 666391573805662220
   format: "> %pseudo%: %message%"
+  mc: "&e[&6Discord&e] %user% &f➡ %message%"
+  users:
+    '1':
+      id: 304694488394235924
+      user: "&4[Admin] 0ddlyoko"
+    '2':
+      id: 520268695210295326
+      user: "&4[Admin] babouchka_"
+    '3':
+      id: 392421161092513792
+      user: "&4[Admin] EroTwiiix"
+    '4':
+      id: 243363049505816576
+      user: "&2[Moderateur] LegLinx"
+    '5':
+      id: 294132448097337345
+      user: "&2[Moderateur] GostPunk"
+    '6':
+      id: 414527363234398208
+      user: "&2[Moderateur] Ameliiie"
+    '7':
+      id: 549306792417558539
+      user: "&2[Moderateur] Ameliiie"
+    '8':
+      id: 222064468987740161
+      user: "&2[Moderateur] Zetolution"
+    '9':
+      id: 593062067896844321
+      user: "&a[Guide] 0_SkyWolfLee"
+    '10':
+      id: 229276095621365761
+      user: "&a[Guide] Color4"
+    '11':
+      id: 363367264919093249
+      user: "&a[Guide] Oropo_"
 clear:
   command: "clear"
   allowUsers:

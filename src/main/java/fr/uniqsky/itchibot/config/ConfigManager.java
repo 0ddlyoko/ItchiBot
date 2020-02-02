@@ -4,6 +4,7 @@
 package fr.uniqsky.itchibot.config;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import lombok.Getter;
@@ -61,12 +62,18 @@ public class ConfigManager {
 	// Chat
 	private String chatChannel;
 	private String chatFormat;
+	private String chatMc;
+	private HashMap<String, String> chatUsers;
 
 	// Clear
 	private String clearCommand;
 	private List<String> clearAllowUsers;
 
 	public ConfigManager() {
+		reload();
+	}
+
+	public void reload() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
 		prefix = config.getString("prefix", false);
 		token = config.getString("token", false);
@@ -118,6 +125,14 @@ public class ConfigManager {
 		// Chat
 		chatChannel = config.getString("chat.channel", false);
 		chatFormat = config.getString("chat.format", false);
+		chatMc = config.getString("chat.mc");
+		chatUsers = new HashMap<>();
+		for (String key : config.getKeys("chat.users")) {
+			String k = "chat.users." + key;
+			String id = config.getString(k + ".id");
+			String user = config.getString(k + ".user");
+			chatUsers.put(id, user);
+		}
 
 		// Clear
 		clearCommand = config.getString("clear.command", false);

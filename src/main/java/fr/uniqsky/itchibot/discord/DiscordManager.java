@@ -13,12 +13,13 @@ import org.bukkit.Bukkit;
 
 import fr.uniqsky.itchibot.DiscordUtil;
 import fr.uniqsky.itchibot.ItchiBot;
-import fr.uniqsky.itchibot.commands.commands.AcceptCmd;
-import fr.uniqsky.itchibot.commands.commands.ClearCmd;
-import fr.uniqsky.itchibot.commands.commands.DenyCmd;
-import fr.uniqsky.itchibot.commands.commands.HelpCmd;
+import fr.uniqsky.itchibot.commands.discord.commands.AcceptCmd;
+import fr.uniqsky.itchibot.commands.discord.commands.ClearCmd;
+import fr.uniqsky.itchibot.commands.discord.commands.DenyCmd;
+import fr.uniqsky.itchibot.commands.discord.commands.HelpCmd;
 import fr.uniqsky.itchibot.listeners.DiscordListenerAdapter;
 import fr.uniqsky.itchibot.listeners.StopListener;
+import fr.uniqsky.itchibot.listeners.listeners.ChatListener;
 import fr.uniqsky.itchibot.listeners.listeners.NewUserListener;
 import fr.uniqsky.itchibot.listeners.listeners.PlayerNumberListener;
 import fr.uniqsky.itchibot.listeners.listeners.SuggestListener;
@@ -83,7 +84,7 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 		ItchiBot.get().getCommandManager().registerCommand(new DenyCmd());
 		ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
 		// Listeners
-		// addEventListener(new ChatListener());
+		addEventListener(new ChatListener());
 		addEventListener(new NewUserListener());
 		addEventListener(new PlayerNumberListener());
 		addEventListener(new SuggestListener());
@@ -97,6 +98,7 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 		// Self bot
 		if (e.getAuthor().equals(e.getJDA().getSelfUser()))
 			return;
+		// Check command
 		if (ItchiBot.get().getCommandManager().onChat(e))
 			return;
 	}
