@@ -20,6 +20,7 @@ import fr.uniqsky.itchibot.commands.discord.commands.HelpCmd;
 import fr.uniqsky.itchibot.listeners.DiscordListenerAdapter;
 import fr.uniqsky.itchibot.listeners.StopListener;
 import fr.uniqsky.itchibot.listeners.listeners.ChatListener;
+import fr.uniqsky.itchibot.listeners.listeners.MemberListener;
 import fr.uniqsky.itchibot.listeners.listeners.NewUserListener;
 import fr.uniqsky.itchibot.listeners.listeners.PlayerNumberListener;
 import fr.uniqsky.itchibot.listeners.listeners.SuggestListener;
@@ -85,6 +86,7 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 		ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
 		// Listeners
 		addEventListener(new ChatListener());
+		addEventListener(new MemberListener());
 		addEventListener(new NewUserListener());
 		addEventListener(new PlayerNumberListener());
 		addEventListener(new SuggestListener());
@@ -124,6 +126,7 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 				}
 				jda.shutdownNow();
 			}
+			jda = null;
 		} catch (Exception ex) {
 			Bukkit.getLogger().log(Level.SEVERE, "", ex);
 		}

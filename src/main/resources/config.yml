@@ -16,6 +16,10 @@ help:
       - "`&accept <id>` - Accepter une suggestion"
       - "`&deny <id>` - Refuser une suggestion"
       - "`&clear <number>` - Clear des messages"
+    2:
+      title: "Users"
+      values:
+      - "`&help` - Afficher cette page"
 suggests:
   channels:
   - 639122530904571924
@@ -47,6 +51,10 @@ new:
   name: 'Membre :'
   value: '%user%'
   footer: 'Nous sommes désormais %number% membres'
+member:
+  message: 643212308998389809
+  reaction: 642724648517238785
+  role: 643212994226028574
 playernumber:
   channel: 662421330502746112
   message: "Connecté : %number%/%maxnumber%"

@@ -55,6 +55,11 @@ public class ConfigManager {
 	private String newValue;
 	private String newFooter;
 
+	// Member
+	private String memberMessage;
+	private String memberReaction;
+	private String memberRole;
+
 	// PlayerNumber
 	private String playerNumberChannel;
 	private String playerNumberMessage;
@@ -117,6 +122,11 @@ public class ConfigManager {
 		newName = config.getString("new.name", false);
 		newValue = config.getString("new.value", false);
 		newFooter = config.getString("new.footer", false);
+
+		// Member
+		memberMessage = config.getString("member.message", false);
+		memberReaction = config.getString("member.reaction", false);
+		memberRole = config.getString("member.role", false);
 
 		// PlayerNumber
 		playerNumberChannel = config.getString("playernumber.channel", false);

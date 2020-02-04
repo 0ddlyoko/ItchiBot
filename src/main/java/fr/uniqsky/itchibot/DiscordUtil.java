@@ -74,7 +74,7 @@ public interface DiscordUtil {
 		em.setDescription(description);
 		em.setFooter(footer);
 		for (int i = 0; i < Math.min(fieldNames.length, fieldValues.length); i++) {
-			em.addField(fieldNames[i], fieldValues[i], true);
+			em.addField(fieldNames[i], fieldValues[i], false);
 		}
 		return em.build();
 	}
