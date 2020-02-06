@@ -1,49 +1,50 @@
-token: "<yourtoken>"
-prefix: "&"
-activity: "play.uniqsky.fr"
-noPerm: "😂"
+token: '<yourtoken>'
+id: 638830390760570891
+prefix: '&'
+activity: 'play.uniqsky.fr'
+noPerm: '😂'
 reaction:
-  valid: "UsValid:642724648517238785"
-  invalid: "USnot_Valid:642724619454906378"
+  valid: 'UsValid:642724648517238785'
+  invalid: 'USnot_Valid:642724619454906378'
 help:
-  command: "help"
-  title: "Help"
-  footer: "Made by 0ddlyoko and Grandoz for UniqSky"
+  command: 'help'
+  title: 'Help'
+  footer: 'Made by 0ddlyoko and Grandoz for UniqSky'
   show:
     1:
-      title: "Mods"
+      title: 'Users'
       values:
-      - "`&accept <id>` - Accepter une suggestion"
-      - "`&deny <id>` - Refuser une suggestion"
-      - "`&clear <number>` - Clear des messages"
+      - '`&help` - Afficher cette page'
     2:
-      title: "Users"
+      title: 'Mods'
       values:
-      - "`&help` - Afficher cette page"
+      - '`&accept <id>` - Accepter une suggestion'
+      - '`&deny <id>` - Refuser une suggestion'
+      - '`&clear <number>` - Clear des messages'
 suggests:
   channels:
   - 639122530904571924
   - 638835318199681047
-  title: "**Suggestion de *%user%***"
-  message: "%message%"
+  title: '**Suggestion de *%user%***'
+  message: '%message%'
   footer: 'Une suggestion? Écrivez-la ici'
 accept:
-  command: "accept"
+  command: 'accept'
   allowUsers:
   - 304694488394235924
   - 520268695210295326
   - 392421161092513792
   channel: 639122594112733204
-  notfound: "⁉️"
+  notfound: '⁉️'
   footer: 'Cette suggestion a été acceptée, merci à vous'
 deny:
-  command: "deny"
+  command: 'deny'
   allowUsers:
   - 304694488394235924
   - 520268695210295326
   - 392421161092513792
   channel: 666661238444523580
-  notfound: "⁉️"
+  notfound: '⁉️'
   footer: 'Cette suggestion a été refusée'
 new:
   title: 'Nouveau membre ! 🎉'
@@ -55,49 +56,62 @@ member:
   message: 643212308998389809
   reaction: 642724648517238785
   role: 643212994226028574
+role:
+  command: 'role'
+  notConnected: 'Vous devez être connecté pour pouvoir récupérer votre grade'
+  roles:
+    '1':
+      permission: 'itchibot.role.pirate'
+      discord: 665240118981951489
+    '2':
+      permission: 'itchibot.role.chevalier'
+      discord: 665247934073536512
+    '3':
+      permission: 'itchibot.role.empereur'
+      discord: 665247938557116416
 playernumber:
   channel: 662421330502746112
-  message: "Connecté : %number%/%maxnumber%"
+  message: 'Connecté : %number%/%maxnumber%'
 chat:
   channel: 666391573805662220
-  format: "> %pseudo%: %message%"
-  mc: "&e[&6Discord&e] %user% &f➡ %message%"
+  format: '> %pseudo%: %message%'
+  mc: '&e[&6Discord&e] %user% &f➡ %message%'
   users:
     '1':
       id: 304694488394235924
-      user: "&4[Admin] 0ddlyoko"
+      user: '&4[Admin] 0ddlyoko'
     '2':
       id: 520268695210295326
-      user: "&4[Admin] babouchka_"
+      user: '&4[Admin] babouchka_'
     '3':
       id: 392421161092513792
-      user: "&4[Admin] EroTwiiix"
+      user: '&4[Admin] EroTwiiix'
     '4':
       id: 243363049505816576
-      user: "&2[Moderateur] LegLinx"
+      user: '&2[Moderateur] LegLinx'
     '5':
       id: 294132448097337345
-      user: "&2[Moderateur] GostPunk"
+      user: '&2[Moderateur] GostPunk'
     '6':
       id: 414527363234398208
-      user: "&2[Moderateur] Ameliiie"
+      user: '&2[Moderateur] Ameliiie'
     '7':
       id: 549306792417558539
-      user: "&2[Moderateur] Ameliiie"
+      user: '&2[Moderateur] Ameliiie'
     '8':
       id: 222064468987740161
-      user: "&2[Moderateur] Zetolution"
+      user: '&2[Moderateur] Zetolution'
     '9':
       id: 593062067896844321
-      user: "&a[Guide] 0_SkyWolfLee"
+      user: '&a[Guide] 0_SkyWolfLee'
     '10':
       id: 229276095621365761
-      user: "&a[Guide] Color4"
+      user: '&a[Guide] Color4'
     '11':
       id: 363367264919093249
-      user: "&a[Guide] Oropo_"
+      user: '&a[Guide] Oropo_'
 clear:
-  command: "clear"
+  command: 'clear'
   allowUsers:
   - 304694488394235924
   - 520268695210295326

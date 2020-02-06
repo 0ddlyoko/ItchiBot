@@ -17,6 +17,7 @@ import fr.uniqsky.itchibot.commands.discord.commands.AcceptCmd;
 import fr.uniqsky.itchibot.commands.discord.commands.ClearCmd;
 import fr.uniqsky.itchibot.commands.discord.commands.DenyCmd;
 import fr.uniqsky.itchibot.commands.discord.commands.HelpCmd;
+import fr.uniqsky.itchibot.commands.discord.commands.RoleCmd;
 import fr.uniqsky.itchibot.listeners.DiscordListenerAdapter;
 import fr.uniqsky.itchibot.listeners.StopListener;
 import fr.uniqsky.itchibot.listeners.listeners.ChatListener;
@@ -31,6 +32,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -39,7 +41,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 	@Getter
 	private JDA jda;
+	@Getter
+	private Guild guild;
 	private List<StopListener> stops;
+	@Getter
+	private RoleCmd roleCmd;
 
 	public DiscordManager() {
 		stops = new ArrayList<>();
@@ -78,12 +84,14 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 	@Override
 	public void onReady(ReadyEvent event) {
 		System.out.println("API is ready!");
+		guild = jda.getGuildById(ItchiBot.get().getConfigManager().getId());
 
 		// Commands
 		ItchiBot.get().getCommandManager().registerCommand(new AcceptCmd());
 		ItchiBot.get().getCommandManager().registerCommand(new ClearCmd());
 		ItchiBot.get().getCommandManager().registerCommand(new DenyCmd());
 		ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
+		ItchiBot.get().getCommandManager().registerCommand(roleCmd = new RoleCmd());
 		// Listeners
 		addEventListener(new ChatListener());
 		addEventListener(new MemberListener());

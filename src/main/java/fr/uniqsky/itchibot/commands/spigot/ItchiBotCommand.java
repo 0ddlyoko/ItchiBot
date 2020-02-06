@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import fr.uniqsky.itchibot.ItchiBot;
 import fr.uniqsky.itchibot.__;
@@ -23,6 +24,8 @@ public class ItchiBotCommand implements CommandExecutor {
 				if (sender.hasPermission("itchibot.reload"))
 					sender.sendMessage(
 							ChatColor.AQUA + "- /itchibot reload" + ChatColor.YELLOW + " : Reload config file");
+				sender.sendMessage(ChatColor.AQUA + "- /itchibot link <tag>" + ChatColor.YELLOW
+						+ " : Link your minecraft account to discord");
 			} else if ("info".equalsIgnoreCase(args[0])) {
 				sender.sendMessage(ChatColor.YELLOW + "-----------[" + ChatColor.GOLD + __.NAME + ChatColor.YELLOW
 						+ "]-----------");
@@ -37,7 +40,20 @@ public class ItchiBotCommand implements CommandExecutor {
 					ItchiBot.get().getConfigManager().reload();
 					sender.sendMessage(__.PREFIX + ChatColor.GREEN + "Reloaded");
 				}
+			} else if ("link".equalsIgnoreCase(args[0])) {
+				if (!(sender instanceof Player)) {
+					// Not a player
+					sender.sendMessage(__.PREFIX + ChatColor.RED + "You must be a player to execute this command");
+					return true;
+				}
+				Player p = (Player) sender;
+				if (args.length != 2) {
+					p.sendMessage(__.PREFIX + ChatColor.RED + "Syntax: /itchibot link <tag>");
+					return true;
+				}
+				ItchiBot.get().getDiscordManager().getRoleCmd().onPlayerCommand(p, args[1]);
 			}
+			return true;
 		}
 		return false;
 	}

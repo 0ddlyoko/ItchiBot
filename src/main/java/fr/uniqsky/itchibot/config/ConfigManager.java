@@ -13,6 +13,7 @@ import lombok.Getter;
 public class ConfigManager {
 	private Config config;
 	private String token;
+	private String id;
 	private String prefix;
 	private String activity;
 	private String noPerm;
@@ -60,6 +61,11 @@ public class ConfigManager {
 	private String memberReaction;
 	private String memberRole;
 
+	// Role
+	private String roleCommand;
+	private String roleNotConnected;
+	private HashMap<String, String> roleRoles;
+
 	// PlayerNumber
 	private String playerNumberChannel;
 	private String playerNumberMessage;
@@ -81,6 +87,7 @@ public class ConfigManager {
 	public void reload() {
 		config = new Config(new File("plugins" + File.separator + "ItchiBot" + File.separator + "config.yml"));
 		prefix = config.getString("prefix", false);
+		id = config.getString("id", false);
 		token = config.getString("token", false);
 		activity = config.getString("activity", false);
 		noPerm = config.getString("noPerm", false);
@@ -128,6 +135,17 @@ public class ConfigManager {
 		memberReaction = config.getString("member.reaction", false);
 		memberRole = config.getString("member.role", false);
 
+		// Role
+		roleCommand = config.getString("role.command", false);
+		roleNotConnected = config.getString("role.notConnected", false);
+		roleRoles = new HashMap<>();
+		for (String key : config.getKeys("role.roles")) {
+			String k = "role.roles." + key;
+			String permission = config.getString(k + ".permission", false);
+			String discord = config.getString(k + ".discord", false);
+			roleRoles.put(discord, permission);
+		}
+
 		// PlayerNumber
 		playerNumberChannel = config.getString("playernumber.channel", false);
 		playerNumberMessage = config.getString("playernumber.message", false);
@@ -139,7 +157,7 @@ public class ConfigManager {
 		chatUsers = new HashMap<>();
 		for (String key : config.getKeys("chat.users")) {
 			String k = "chat.users." + key;
-			String id = config.getString(k + ".id");
+			String id = config.getString(k + ".id", false);
 			String user = config.getString(k + ".user");
 			chatUsers.put(id, user);
 		}
