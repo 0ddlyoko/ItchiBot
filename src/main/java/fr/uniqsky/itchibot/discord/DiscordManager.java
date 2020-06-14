@@ -87,17 +87,27 @@ public class DiscordManager extends ListenerAdapter implements DiscordUtil {
 		guild = jda.getGuildById(ItchiBot.get().getConfigManager().getId());
 
 		// Commands
-		ItchiBot.get().getCommandManager().registerCommand(new AcceptCmd());
-		ItchiBot.get().getCommandManager().registerCommand(new ClearCmd());
-		ItchiBot.get().getCommandManager().registerCommand(new DenyCmd());
-		ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
-		ItchiBot.get().getCommandManager().registerCommand(roleCmd = new RoleCmd());
+		if (ItchiBot.get().getConfigManager().isAcceptActive())
+			ItchiBot.get().getCommandManager().registerCommand(new AcceptCmd());
+		if (ItchiBot.get().getConfigManager().isClearActive())
+			ItchiBot.get().getCommandManager().registerCommand(new ClearCmd());
+		if (ItchiBot.get().getConfigManager().isDenyActive())
+			ItchiBot.get().getCommandManager().registerCommand(new DenyCmd());
+		if (ItchiBot.get().getConfigManager().isHelpActive())
+			ItchiBot.get().getCommandManager().registerCommand(new HelpCmd());
+		if (ItchiBot.get().getConfigManager().isRoleActive())
+			ItchiBot.get().getCommandManager().registerCommand(roleCmd = new RoleCmd());
 		// Listeners
-		addEventListener(new ChatListener());
-		addEventListener(new MemberListener());
-		addEventListener(new NewUserListener());
-		addEventListener(new PlayerNumberListener());
-		addEventListener(new SuggestListener());
+		if (ItchiBot.get().getConfigManager().isChatActive())
+			addEventListener(new ChatListener());
+		if (ItchiBot.get().getConfigManager().isMemberActive())
+			addEventListener(new MemberListener());
+		if (ItchiBot.get().getConfigManager().isNewActive())
+			addEventListener(new NewUserListener());
+		if (ItchiBot.get().getConfigManager().isPlayerNumberActive())
+			addEventListener(new PlayerNumberListener());
+		if (ItchiBot.get().getConfigManager().isSuggestActive())
+			addEventListener(new SuggestListener());
 	}
 
 	@Override

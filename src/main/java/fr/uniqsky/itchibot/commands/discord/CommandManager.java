@@ -1,6 +1,7 @@
 package fr.uniqsky.itchibot.commands.discord;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import fr.uniqsky.itchibot.ItchiBot;
@@ -45,5 +46,11 @@ public class CommandManager {
 			return cmd.onCommand(label, args, e);
 		}
 		return false;
+	}
+
+	public void stop() {
+		for (String command : new HashSet<>(commands.keySet())) {
+			unregisterCommand(command);
+		}
 	}
 }

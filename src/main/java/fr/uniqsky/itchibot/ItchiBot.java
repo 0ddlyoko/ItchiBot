@@ -37,6 +37,10 @@ public class ItchiBot extends JavaPlugin {
 			discordManager.stop();
 	}
 
+	public void reload() {
+		configManager.reload();
+	}
+
 	public static ItchiBot get() {
 		return INSTANCE;
 	}

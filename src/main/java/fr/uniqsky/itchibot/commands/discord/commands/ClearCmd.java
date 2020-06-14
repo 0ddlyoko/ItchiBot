@@ -1,5 +1,8 @@
 package fr.uniqsky.itchibot.commands.discord.commands;
 
+import java.util.List;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 
 import fr.uniqsky.itchibot.DiscordUtil;
@@ -26,6 +29,43 @@ public class ClearCmd implements Command, DiscordUtil {
 			e.getMessage().delete().queue();
 			return true;
 		}
+		MessageHistory history = new MessageHistory(e.getChannel());
+		if ("all".equalsIgnoreCase(args[0])) {
+			// Clear all messages
+			Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
+				try {
+					List<Message> msgs;
+					while (true) {
+						msgs = history.retrievePast(50).complete();
+						if (msgs.size() == 0)
+							break;
+						e.getTextChannel().deleteMessages(msgs).complete();
+					}
+				} catch (Exception ex) {
+					Bukkit.getLogger().log(Level.SEVERE, "Exception while retrieving ALL history: ", ex);
+				}
+			});
+			return true;
+		} else if ("until".equalsIgnoreCase(args[0])) {
+			if (args.length == 1) {
+				e.getMessage().delete().queue();
+				return true;
+			}
+			Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
+				try {
+					List<Message> msgs;
+					while (true) {
+						msgs = history.retrievePast(1).complete();
+						msgs.get(0).delete().complete();
+						if (msgs.get(0).getId().equalsIgnoreCase(args[1]))
+							break;
+					}
+				} catch (Exception ex) {
+					Bukkit.getLogger().log(Level.SEVERE, "Exception while retrieving UNTIL history: ", ex);
+				}
+			});
+			return true;
+		}
 		int number = 1;
 		try {
 			number = Integer.parseInt(args[0]);
@@ -42,9 +82,13 @@ public class ClearCmd implements Command, DiscordUtil {
 		// JAVA ...
 		final int copyNumber = number - 1;
 		Bukkit.getScheduler().runTaskAsynchronously(ItchiBot.get(), () -> {
-			MessageHistory history = e.getChannel().getHistoryBefore(e.getMessage(), copyNumber).complete();
-			for (Message m : history.getRetrievedHistory())
-				m.delete().queue();
+			try {
+				List<Message> msgs = history.retrievePast(copyNumber).complete();
+				e.getTextChannel().deleteMessages(msgs).complete();
+			} catch (Exception ex) {
+				Bukkit.getLogger().log(Level.SEVERE, "Exception while retrieving history: ", ex);
+
+			}
 		});
 		return true;
 	}

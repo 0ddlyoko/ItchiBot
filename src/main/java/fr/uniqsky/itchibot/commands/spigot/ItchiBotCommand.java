@@ -24,7 +24,7 @@ public class ItchiBotCommand implements CommandExecutor {
 				if (sender.hasPermission("itchibot.reload"))
 					sender.sendMessage(
 							ChatColor.AQUA + "- /itchibot reload" + ChatColor.YELLOW + " : Reload config file");
-				sender.sendMessage(ChatColor.AQUA + "- /itchibot link <tag>" + ChatColor.YELLOW
+				sender.sendMessage(ChatColor.AQUA + "- /itchibot link <id>" + ChatColor.YELLOW
 						+ " : Link your minecraft account to discord");
 			} else if ("info".equalsIgnoreCase(args[0])) {
 				sender.sendMessage(ChatColor.YELLOW + "-----------[" + ChatColor.GOLD + __.NAME + ChatColor.YELLOW
@@ -37,7 +37,7 @@ public class ItchiBotCommand implements CommandExecutor {
 				if (sender.hasPermission("itchibot.reload")) {
 					// Reload
 					sender.sendMessage(__.PREFIX + ChatColor.GREEN + "Reloading ...");
-					ItchiBot.get().getConfigManager().reload();
+					ItchiBot.get().reload();
 					sender.sendMessage(__.PREFIX + ChatColor.GREEN + "Reloaded");
 				}
 			} else if ("link".equalsIgnoreCase(args[0])) {
@@ -47,11 +47,12 @@ public class ItchiBotCommand implements CommandExecutor {
 					return true;
 				}
 				Player p = (Player) sender;
-				if (args.length != 2) {
-					p.sendMessage(__.PREFIX + ChatColor.RED + "Syntax: /itchibot link <tag>");
+				if (args.length <= 1) {
+					p.sendMessage(__.PREFIX + ChatColor.RED + "Syntax: /itchibot link <id>");
 					return true;
 				}
-				ItchiBot.get().getDiscordManager().getRoleCmd().onPlayerCommand(p, args[1]);
+				String id = String.join(" ", args).substring("link ".length());
+				ItchiBot.get().getDiscordManager().getRoleCmd().onPlayerCommand(p, id);
 			}
 			return true;
 		}

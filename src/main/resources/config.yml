@@ -7,6 +7,7 @@ reaction:
   valid: 'UsValid:642724648517238785'
   invalid: 'USnot_Valid:642724619454906378'
 help:
+  active: true
   command: 'help'
   title: 'Help'
   footer: 'Made by 0ddlyoko and Grandoz for UniqSky'
@@ -15,6 +16,7 @@ help:
       title: 'Users'
       values:
       - '`&help` - Afficher cette page'
+      - '`&role <yourMinecraftName>` - Récupérer votre role sur Discord'
     2:
       title: 'Mods'
       values:
@@ -22,6 +24,7 @@ help:
       - '`&deny <id>` - Refuser une suggestion'
       - '`&clear <number>` - Clear des messages'
 suggests:
+  active: true
   channels:
   - 639122530904571924
   - 638835318199681047
@@ -29,15 +32,18 @@ suggests:
   message: '%message%'
   footer: 'Une suggestion? Écrivez-la ici'
 accept:
+  active: true
   command: 'accept'
   allowUsers:
   - 304694488394235924
   - 520268695210295326
   - 392421161092513792
+  - 152872885113978881
   channel: 639122594112733204
   notfound: '⁉️'
   footer: 'Cette suggestion a été acceptée, merci à vous'
 deny:
+  active: true
   command: 'deny'
   allowUsers:
   - 304694488394235924
@@ -47,16 +53,19 @@ deny:
   notfound: '⁉️'
   footer: 'Cette suggestion a été refusée'
 new:
+  active: true
   title: 'Nouveau membre ! 🎉'
   channel: 638877412108533841
   name: 'Membre :'
   value: '%user%'
   footer: 'Nous sommes désormais %number% membres'
 member:
+  active: true
   message: 643212308998389809
   reaction: 642724648517238785
   role: 643212994226028574
 role:
+  active: true
   command: 'role'
   notConnected: 'Vous devez être connecté pour pouvoir récupérer votre grade'
   roles:
@@ -69,10 +78,14 @@ role:
     '3':
       permission: 'itchibot.role.empereur'
       discord: 665247938557116416
+  log: 651680133744164864
 playernumber:
+  active: true
+  usebungeecord: false
   channel: 662421330502746112
   message: 'Connecté : %number%/%maxnumber%'
 chat:
+  active: true
   channel: 666391573805662220
   format: '> %pseudo%: %message%'
   mc: '&e[&6Discord&e] %user% &f➡ %message%'
@@ -111,6 +124,7 @@ chat:
       id: 363367264919093249
       user: '&a[Guide] Oropo_'
 clear:
+  active: true
   command: 'clear'
   allowUsers:
   - 304694488394235924

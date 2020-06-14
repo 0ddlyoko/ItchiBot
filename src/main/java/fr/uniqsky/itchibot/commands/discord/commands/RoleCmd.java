@@ -20,6 +20,7 @@ import fr.uniqsky.itchibot.__;
 import fr.uniqsky.itchibot.commands.discord.Command;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class RoleCmd implements Command, Listener {
@@ -27,6 +28,7 @@ public class RoleCmd implements Command, Listener {
 	// value
 	private HashMap<UUID, String> players;
 	private Map<Role, String> roles;
+	private TextChannel logChannel;
 
 	public RoleCmd() {
 		players = new HashMap<>();
@@ -40,6 +42,8 @@ public class RoleCmd implements Command, Listener {
 			}
 			roles.put(r, role.getValue());
 		}
+		logChannel = ItchiBot.get().getDiscordManager().getGuild()
+				.getTextChannelById(ItchiBot.get().getConfigManager().getRoleLog());
 	}
 
 	@Override
@@ -60,10 +64,15 @@ public class RoleCmd implements Command, Listener {
 			return true;
 		}
 		// Player is connected
+		// Check if someone has sent the command
+		if (players.containsKey(p.getUniqueId())) {
+			e.getMessage().addReaction(ItchiBot.get().getConfigManager().getReactionInvalid()).queue();
+			return true;
+		}
 		// Add to list
-		players.put(p.getUniqueId(), e.getAuthor().getId());
+		players.put(p.getUniqueId(), e.getAuthor().getAsTag());
 		// Send message
-		e.getAuthor().openPrivateChannel().flatMap(c -> c.sendMessage("/itchibot link " + e.getAuthor().getId()))
+		e.getAuthor().openPrivateChannel().flatMap(c -> c.sendMessage("/itchibot link " + e.getAuthor().getAsTag()))
 				.queue();
 		return true;
 	}
@@ -80,7 +89,7 @@ public class RoleCmd implements Command, Listener {
 			return;
 		}
 		// Get player
-		Member member = ItchiBot.get().getDiscordManager().getGuild().getMemberById(id);
+		Member member = ItchiBot.get().getDiscordManager().getGuild().getMemberByTag(id);
 		if (member == null) {
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_AMBIENT, 1, 1);
 			return;
@@ -92,6 +101,8 @@ public class RoleCmd implements Command, Listener {
 		for (Entry<Role, String> r : this.roles.entrySet())
 			if (p.hasPermission(r.getValue()))
 				roles.add(r.getKey());
+		logChannel.sendMessage("User " + member.getUser().getAsTag() + " (#" + member.getUser().getId()
+				+ ") has been linked with " + p.getName()).queue();
 		// Add roles
 		ItchiBot.get().getDiscordManager().getGuild().modifyMemberRoles(member, roles, null).queue();
 	}
