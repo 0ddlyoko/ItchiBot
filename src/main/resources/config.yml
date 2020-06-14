@@ -1,13 +1,135 @@
-token: "<yourtoken>"
-prefix: "&"
-activity: "https://uniqsky.fr"
+token: '<yourtoken>'
+id: 638830390760570891
+prefix: '&'
+activity: 'play.uniqsky.fr'
+noPerm: '😂'
 reaction:
-  valid: "UsValid:642724648517238785"
-  invalid: "USnot_Valid:642724619454906378"
+  valid: 'UsValid:642724648517238785'
+  invalid: 'USnot_Valid:642724619454906378'
+help:
+  active: true
+  command: 'help'
+  title: 'Help'
+  footer: 'Made by 0ddlyoko and Grandoz for UniqSky'
+  show:
+    1:
+      title: 'Users'
+      values:
+      - '`&help` - Afficher cette page'
+      - '`&role <yourMinecraftName>` - Récupérer votre role sur Discord'
+    2:
+      title: 'Mods'
+      values:
+      - '`&accept <id>` - Accepter une suggestion'
+      - '`&deny <id>` - Refuser une suggestion'
+      - '`&clear <number>` - Clear des messages'
 suggests:
+  active: true
   channels:
   - 639122530904571924
   - 638835318199681047
-  title: "**Suggestion de *%user%***"
-  message: "%message%"
+  title: '**Suggestion de *%user%***'
+  message: '%message%'
   footer: 'Une suggestion? Écrivez-la ici'
+accept:
+  active: true
+  command: 'accept'
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  - 392421161092513792
+  - 152872885113978881
+  channel: 639122594112733204
+  notfound: '⁉️'
+  footer: 'Cette suggestion a été acceptée, merci à vous'
+deny:
+  active: true
+  command: 'deny'
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  - 392421161092513792
+  channel: 666661238444523580
+  notfound: '⁉️'
+  footer: 'Cette suggestion a été refusée'
+new:
+  active: true
+  title: 'Nouveau membre ! 🎉'
+  channel: 638877412108533841
+  name: 'Membre :'
+  value: '%user%'
+  footer: 'Nous sommes désormais %number% membres'
+member:
+  active: true
+  message: 643212308998389809
+  reaction: 642724648517238785
+  role: 643212994226028574
+role:
+  active: true
+  command: 'role'
+  notConnected: 'Vous devez être connecté pour pouvoir récupérer votre grade'
+  roles:
+    '1':
+      permission: 'itchibot.role.pirate'
+      discord: 665240118981951489
+    '2':
+      permission: 'itchibot.role.chevalier'
+      discord: 665247934073536512
+    '3':
+      permission: 'itchibot.role.empereur'
+      discord: 665247938557116416
+  log: 651680133744164864
+playernumber:
+  active: true
+  usebungeecord: false
+  channel: 662421330502746112
+  message: 'Connecté : %number%/%maxnumber%'
+chat:
+  active: true
+  channel: 666391573805662220
+  format: '> %pseudo%: %message%'
+  mc: '&e[&6Discord&e] %user% &f➡ %message%'
+  users:
+    '1':
+      id: 304694488394235924
+      user: '&4[Admin] 0ddlyoko'
+    '2':
+      id: 520268695210295326
+      user: '&4[Admin] babouchka_'
+    '3':
+      id: 392421161092513792
+      user: '&4[Admin] EroTwiiix'
+    '4':
+      id: 243363049505816576
+      user: '&2[Moderateur] LegLinx'
+    '5':
+      id: 294132448097337345
+      user: '&2[Moderateur] GostPunk'
+    '6':
+      id: 414527363234398208
+      user: '&2[Moderateur] Ameliiie'
+    '7':
+      id: 549306792417558539
+      user: '&2[Moderateur] Ameliiie'
+    '8':
+      id: 222064468987740161
+      user: '&2[Moderateur] Zetolution'
+    '9':
+      id: 593062067896844321
+      user: '&a[Guide] 0_SkyWolfLee'
+    '10':
+      id: 229276095621365761
+      user: '&a[Guide] Color4'
+    '11':
+      id: 363367264919093249
+      user: '&a[Guide] Oropo_'
+clear:
+  active: true
+  command: 'clear'
+  allowUsers:
+  - 304694488394235924
+  - 520268695210295326
+  - 392421161092513792
+  - 414527363234398208
+  - 294132448097337345
+  - 222064468987740161
